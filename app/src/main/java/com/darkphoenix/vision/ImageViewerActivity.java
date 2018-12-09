@@ -61,7 +61,7 @@ public class ImageViewerActivity extends AppCompatActivity {
                 String root = Environment.getExternalStorageDirectory().toString();
                 File myDir = new File(root + "/saved_images");
                 myDir.mkdirs();
-                File file = new File(myDir, "result.jpg");
+                File file = new File(myDir, "result"+ System.currentTimeMillis()+".jpg");
                 try {
                     FileOutputStream out = new FileOutputStream(file);
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
@@ -71,10 +71,12 @@ public class ImageViewerActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 //TODO
-                /*Intent intent = new Intent(ImageViewerActivity.this, ImageReady.class);
-                intent.putExtra("path", getImageUri(ImageViewerActivity.this,bitmap));
-                startActivity(intent);*/
-                Picasso.with(this).load(getImageUri(ImageViewerActivity.this,bitmap)).into(img);
+                System.out.println(file.getPath());
+                Intent intent = new Intent(ImageViewerActivity.this, ImageReady.class);
+                intent.putExtra("data", file);//getImageUri(ImageViewerActivity.this,bitmap));
+                startActivity(intent);
+                ImageViewerActivity.this.finish();
+                //Picasso.with(this).load(getImageUri(ImageViewerActivity.this,bitmap)).into(img);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }

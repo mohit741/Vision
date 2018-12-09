@@ -11,6 +11,6 @@ import retrofit2.http.Part;
 
 interface Service {
     @Multipart
-    @POST("/")
+    @POST("/predict")
     Call<ResponseBody> postImage(@Part MultipartBody.Part image, @Part("name") RequestBody name);
 }

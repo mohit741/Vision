@@ -32,16 +32,16 @@ public class ImageReady extends AppCompatActivity {
         setContentView(R.layout.activity_image_ready);
         img = (ImageView)findViewById(R.id.img_ready);
         btn = (Button)findViewById(R.id.send);
-        final Uri uri = (Uri)getIntent().getParcelableExtra("data");
+        File file = (File)getIntent().getExtras().get("data");
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-        service = new Retrofit.Builder().baseUrl("http://192.168.0.234:3000").client(client).build().create(Service.class);
+        service = new Retrofit.Builder().baseUrl("http://apivision.azurewebsites.net").client(client).build().create(Service.class);
 
-        File file = new File(uri.getPath());
+        //File file = new File(uri.getPath());
         RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), file);
-        MultipartBody.Part body = MultipartBody.Part.createFormData("upload", file.getName(), reqFile);
-        RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "upload_test");
+        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), reqFile);
+        RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "name");
 
 //            Log.d("THIS", data.getData().getPath());
 
@@ -49,6 +49,7 @@ public class ImageReady extends AppCompatActivity {
         req.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                System.out.println(response.body().toString());
                 Toast.makeText(ImageReady.this, "Successfully Uploaded", Toast.LENGTH_LONG).show();
                 ImageReady.this.finish();
 
