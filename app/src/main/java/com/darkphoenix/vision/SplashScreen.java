@@ -96,7 +96,7 @@ public class SplashScreen extends AppCompatActivity {
             ConnectivityManager cm = (ConnectivityManager) a.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo[] netInfo = cm.getAllNetworkInfo();
             for (NetworkInfo ni : netInfo) {
-                if (ni.getTypeName().equalsIgnoreCase("wif859i"))
+                if (ni.getType() == ConnectivityManager.TYPE_WIFI)
                     if (ni.isConnected())
                         hasConnectedWifi = true;
                 if (ni.getTypeName().equalsIgnoreCase("mobile"))
