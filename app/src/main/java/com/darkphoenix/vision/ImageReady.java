@@ -1,5 +1,7 @@
 package com.darkphoenix.vision;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -8,7 +10,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
+import java.io.IOException;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -24,18 +30,20 @@ import retrofit2.Retrofit;
 public class ImageReady extends AppCompatActivity {
 
     Service service;
-    ImageView img;
-    Button btn;
+    ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_ready);
-        img = (ImageView)findViewById(R.id.img_ready);
-        btn = (Button)findViewById(R.id.send);
+        progressDialog = new ProgressDialog(ImageReady.this);
+        progressDialog.setMessage("Getting Predictions...");
+        progressDialog.setIndeterminate(false);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
         File file = (File)getIntent().getExtras().get("data");
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+        //HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        //interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder().build(); //addInterceptor(interceptor).build();
         service = new Retrofit.Builder().baseUrl("http://apivision.azurewebsites.net").client(client).build().create(Service.class);
 
         //File file = new File(uri.getPath());
@@ -49,8 +57,21 @@ public class ImageReady extends AppCompatActivity {
         req.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                System.out.println(response.body().toString());
+                String s="";
+                try
+                {
+                    s = response.body().string();
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+                System.out.println(s);
+                Intent intent = new Intent(ImageReady.this,Prediction.class);
+                intent.putExtra("pred",s);
+                progressDialog.dismiss();
                 Toast.makeText(ImageReady.this, "Successfully Uploaded", Toast.LENGTH_LONG).show();
+                startActivity(intent);
                 ImageReady.this.finish();
 
             }
@@ -58,6 +79,7 @@ public class ImageReady extends AppCompatActivity {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 t.printStackTrace();
+                progressDialog.dismiss();
                 Toast.makeText(ImageReady.this, "Upload Failed", Toast.LENGTH_LONG).show();
                 ImageReady.this.finish();
             }

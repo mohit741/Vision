@@ -44,7 +44,6 @@
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -55,7 +54,8 @@
         <activity android:name=".StepsInfo" />
         <activity android:name=".VideoCaptureActivity" />
         <activity android:name=".ImageViewerActivity" />
-        <activity android:name=".ImageReady"></activity>
+        <activity android:name=".ImageReady" />
+        <activity android:name=".Prediction"></activity>
     </application>
 
 </manifest>

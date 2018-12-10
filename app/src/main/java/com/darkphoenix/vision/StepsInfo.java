@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StepsInfo extends AppCompatActivity {
-    static final int frameCount = 20;
+    static final int frameCount = 25;
     static final int REQUEST_VIDEO_CAPTURE = 1;
     private Button rec;
     ProgressDialog progressDialog;
@@ -105,21 +105,21 @@ public class StepsInfo extends AppCompatActivity {
         @Override
         protected Integer doInBackground(File... params) {
             try {
-                File file = params[0];
+                File f = params[0];
                 System.out.println(params[0].toURI().toString());
                 MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-                retriever.setDataSource(file.getAbsolutePath());
-                long sec = 3000000;
+                retriever.setDataSource(f.getAbsolutePath());
+                long sec = 2000000;
                 imgs = new ArrayList<>();
                 for (int i = 0; i<frameCount; i++) {
                     try {
                         Bitmap bitmap = retriever.getFrameAtTime(sec, MediaMetadataRetriever.OPTION_CLOSEST);
                         OutputStream os = null;
                         try {
-                            file = new File(params[0].getParentFile(), String.format("img%08d.jpg", i));
-                            Uri uri = Uri.fromFile(file);
+                            f = new File(params[0].getParentFile(), String.format("img%08d.jpg", i));
+                            Uri uri = Uri.fromFile(f);
                             imgs.add(uri);
-                            os = new BufferedOutputStream(new FileOutputStream(file));
+                            os = new BufferedOutputStream(new FileOutputStream(f));
                             bitmap.compress(Bitmap.CompressFormat.JPEG, 90, os);
                         } finally {
                             if (os != null)
@@ -130,7 +130,7 @@ public class StepsInfo extends AppCompatActivity {
                         ex.printStackTrace();
                         break;
                     }
-                    sec+=1000000;
+                    sec+=500000;
                 }
                 try {
                     retriever.release();

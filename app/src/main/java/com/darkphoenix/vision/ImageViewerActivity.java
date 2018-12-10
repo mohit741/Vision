@@ -30,6 +30,8 @@ import java.io.FileOutputStream;
 public class ImageViewerActivity extends AppCompatActivity {
 
     ImageView img;
+    Button btn;
+    File file;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +40,7 @@ public class ImageViewerActivity extends AppCompatActivity {
         img = (ImageView)findViewById(R.id.fullImage);
         File fileLocation = new File(uri.getPath());//file path, which can be String, or Uri
         Picasso.with(this).load(fileLocation).into(img);
-        Button btn = (Button)findViewById(R.id.crop);
+        btn = (Button)findViewById(R.id.crop);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,7 +63,7 @@ public class ImageViewerActivity extends AppCompatActivity {
                 String root = Environment.getExternalStorageDirectory().toString();
                 File myDir = new File(root + "/saved_images");
                 myDir.mkdirs();
-                File file = new File(myDir, "result"+ System.currentTimeMillis()+".jpg");
+                file = new File(myDir, "result"+ System.currentTimeMillis()+".jpg");
                 try {
                     FileOutputStream out = new FileOutputStream(file);
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
@@ -70,13 +72,18 @@ public class ImageViewerActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                //TODO
-                System.out.println(file.getPath());
-                Intent intent = new Intent(ImageViewerActivity.this, ImageReady.class);
-                intent.putExtra("data", file);//getImageUri(ImageViewerActivity.this,bitmap));
-                startActivity(intent);
-                ImageViewerActivity.this.finish();
-                //Picasso.with(this).load(getImageUri(ImageViewerActivity.this,bitmap)).into(img);
+                Picasso.with(this).load(getImageUri(ImageViewerActivity.this,bitmap)).into(img);
+                btn.setText("Proceed");
+                btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(ImageViewerActivity.this, ImageReady.class);
+                        intent.putExtra("data", file);//getImageUri(ImageViewerActivity.this,bitmap));
+                        startActivity(intent);
+                        ImageViewerActivity.this.finish();
+                    }
+                });
+                //System.out.println(file.getPath());
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }
